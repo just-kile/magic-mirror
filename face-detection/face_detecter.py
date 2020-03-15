@@ -15,6 +15,9 @@ print("Starting to train model.")
 encodings = []
 names = []
 
+# Used for simple matching
+known_encodings = {}
+
 # Training directory
 train_dir = listdir(face_dir)
 
@@ -35,6 +38,8 @@ for person in train_dir:
             # Add face encoding for current image with corresponding label (name) to the training data
             encodings.append(face_enc)
             names.append(person)
+            if (person not in known_encodings):
+                known_encodings[person] = face_enc
         else:
             print(person + "/" + person_img +
                   " was skipped and can't be used for training")
@@ -42,6 +47,9 @@ for person in train_dir:
 # Create and train the SVC classifier
 clf = svm.SVC(gamma='scale')
 clf.fit(encodings, names)
+
+known_names, known_encodings = zip(*list(known_encodings.items()))
+known_names = np.array(known_names)
 
 print("Trained on the following people", clf.classes_)
 
@@ -70,14 +78,23 @@ while True:
     if process_this_frame:
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(
-            rgb_small_frame, face_locations)
+        if (len(face_locations) == 1): 
+            face_encoding = face_recognition.face_encodings(rgb_small_frame, face_locations)[0]
 
-        face_names = []
-        for face_encoding in face_encodings:
-            # name = clf.predict([face_encoding])
-            w = clf.decision_function([face_encoding])
-            print ("predicted", list(zip(clf.classes_, w.tolist()[0])))
+            matches = face_recognition.compare_faces(known_encodings, face_encoding)
+            matching_persons = known_names[matches]
+            if (len(matching_persons) == 0):
+                name = "Unknown"
+            elif (len(matching_persons) == 1):
+                name = matching_persons[0]
+            else:
+                prediction = clf.predict([face_encoding])[0]
+                if prediction in matching_persons:
+                    name = prediction
+                else: 
+                    name = "Unsure"
+                    
+            print(name)
 
     process_this_frame = not process_this_frame
 
