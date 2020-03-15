@@ -1,48 +1,68 @@
+from os import listdir
+from os.path import isfile, join
 import face_recognition
 import cv2
 import numpy as np
+from sklearn import svm
 
-# This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
-# other example, but it includes some basic performance tweaks to make things run a lot faster:
-#   1. Process each video frame at 1/4 resolution (though still display it at full resolution)
-#   2. Only detect faces in every other frame of video.
+face_dir = "./data/faces/"
 
-# PLEASE NOTE: This example requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
-# OpenCV is *not* required to use the face_recognition library. It's only required if you want to run this
-# specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
+print("Starting to train model.")
 
-# Get a reference to webcam #0 (the default one)
-video_capture = cv2.VideoCapture(0)
+# Training the SVC classifier
 
-# Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.load_image_file("obama.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+# The training data would be all the face encodings from all the known images and the labels are their names
+encodings = []
+names = []
 
-# Load a second sample picture and learn how to recognize it.
-biden_image = face_recognition.load_image_file("biden.jpg")
-biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
+# Used for simple matching
+known_encodings = {}
 
-paul_image = face_recognition.load_image_file("paul1.jpg")
-paul_face_encoding = face_recognition.face_encodings(paul_image)[0]
+# Training directory
+train_dir = listdir(face_dir)
 
+# Loop through each person in the training directory
+for person in train_dir:
+    pix = listdir(join(face_dir, person))
 
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    biden_face_encoding,
-    paul_face_encoding
-]
-known_face_names = [
-    "Barack Obama",
-    "Joe Biden",
-    "Paul"
-]
+    # Loop through each training image for the current person
+    for person_img in pix:
+        # Get the face encodings for the face in each image file
+        face = face_recognition.load_image_file(
+            join(face_dir, person, person_img))
+        face_bounding_boxes = face_recognition.face_locations(face)
+
+        # If training image contains exactly one face
+        if len(face_bounding_boxes) == 1:
+            face_enc = face_recognition.face_encodings(face)[0]
+            # Add face encoding for current image with corresponding label (name) to the training data
+            encodings.append(face_enc)
+            names.append(person)
+            if (person not in known_encodings):
+                known_encodings[person] = face_enc
+        else:
+            print(person + "/" + person_img +
+                  " was skipped and can't be used for training")
+
+# Create and train the SVC classifier
+clf = svm.SVC(gamma='scale')
+clf.fit(encodings, names)
+
+known_names, known_encodings = zip(*list(known_encodings.items()))
+known_names = np.array(known_names)
+
+print("Trained on the following people", clf.classes_)
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+
+# Get a reference to webcam #0 (the default one)
+video_capture = cv2.VideoCapture(0)
+
+print("Ready to identify people now.")
 
 while True:
     # Grab a single frame of video
@@ -58,29 +78,25 @@ while True:
     if process_this_frame:
         # Find all the faces and face encodings in the current frame of video
         face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        if (len(face_locations) == 1): 
+            face_encoding = face_recognition.face_encodings(rgb_small_frame, face_locations)[0]
 
-        face_names = []
-        for face_encoding in face_encodings:
-            # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-            name = "Unknown"
-
-            # Use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
-
-            face_names.append(name)
-        print(face_names)
+            matches = face_recognition.compare_faces(known_encodings, face_encoding)
+            matching_persons = known_names[matches]
+            if (len(matching_persons) == 0):
+                name = "Unknown"
+            elif (len(matching_persons) == 1):
+                name = matching_persons[0]
+            else:
+                prediction = clf.predict([face_encoding])[0]
+                if prediction in matching_persons:
+                    name = prediction
+                else: 
+                    name = "Unsure"
+                    
+            print(name)
 
     process_this_frame = not process_this_frame
 
-    # Hit 'q' on the keyboard to quit!
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
 # Release handle to the webcam
 video_capture.release()
-cv2.destroyAllWindows()
