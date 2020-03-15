@@ -43,7 +43,7 @@ for person in train_dir:
 clf = svm.SVC(gamma='scale')
 clf.fit(encodings, names)
 
-print("Trained on the following people", set(names))
+print("Trained on the following people", clf.classes_)
 
 # Initialize some variables
 face_locations = []
@@ -76,9 +76,8 @@ while True:
         face_names = []
         for face_encoding in face_encodings:
             # name = clf.predict([face_encoding])
-            name = clf.decision_function([face_encoding])
-            
-            print ("predicted", name)
+            w = clf.decision_function([face_encoding])
+            print ("predicted", list(zip(clf.classes_, w.tolist()[0])))
 
     process_this_frame = not process_this_frame
 

@@ -37,6 +37,9 @@ https://github.com/ageitgey/face_recognition
 pip install face_recognition
 pip install -U scikit-learn
 
+## Notes
+Face detection seems to be very robust against facial expressions but very fragile on unbalanced data.
+
 ## References
 
 https://www.instructables.com/id/Who-Is-at-the-Coffee-Machine-Facial-Recognition-Us/
