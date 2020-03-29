@@ -1,9 +1,13 @@
-from os import listdir
+import sys
+from os import listdir, fdopen
 from os.path import isfile, join
 import face_recognition
 import cv2
 import numpy as np
 from sklearn import svm
+
+unbuffered = fdopen(sys.stdout.fileno(), 'w', 0)
+sys.stdout = unbuffered
 
 face_dir = "./data/faces/"
 

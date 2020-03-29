@@ -20,7 +20,7 @@ const pyOptions = {
   args: []
 };
 
-let pyshell = new PythonShell('test.py', pyOptions);
+let pyshell = new PythonShell('../face-detection/face_detecter.py', pyOptions);
 
 pyshell.on('message', m => {
   console.log('received', m)
