@@ -5,9 +5,9 @@ import cv2
 import numpy as np
 from sklearn import svm
 
-face_dir = "./data/faces/"
+face_dir = "../data/faces/"
 
-print("Starting to train model.")
+print("Starting to train model.", flush=True)
 
 # Training the SVC classifier
 
@@ -42,7 +42,7 @@ for person in train_dir:
                 known_encodings[person] = face_enc
         else:
             print(person + "/" + person_img +
-                  " was skipped and can't be used for training")
+                  " was skipped and can't be used for training", flush=True)
 
 # Create and train the SVC classifier
 clf = svm.SVC(gamma='scale')
@@ -51,7 +51,7 @@ clf.fit(encodings, names)
 known_names, known_encodings = zip(*list(known_encodings.items()))
 known_names = np.array(known_names)
 
-print("Trained on the following people", clf.classes_)
+print("Trained on the following people", clf.classes_, flush=True)
 
 # Initialize some variables
 face_locations = []
@@ -62,7 +62,7 @@ process_this_frame = True
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-print("Ready to identify people now.")
+print("Ready to identify people now.", flush=True)
 
 while True:
     # Grab a single frame of video
@@ -94,7 +94,7 @@ while True:
                 else: 
                     name = "Unsure"
                     
-            print(name)
+            print(name, flush=True)
 
     process_this_frame = not process_this_frame
 
