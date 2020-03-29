@@ -1,20 +1,21 @@
-// const express = require('express');
-// const path = require('path');
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
 const { PythonShell } = require('python-shell');
 
-// let app = express();
+let app = express();
 
-// const public = path.join(__dirname, 'public');
+const public = path.join(__dirname, 'public');
 
-// app.use('/', express.static(public));
+app.use('/', express.static(public));
 
-// const port = '8080'; //TODO load from env
-// app.listen(port);
-// console.log(`Server listening to ${port}`);
+const port = +process.env.PORT || 3000; //TODO load from env
+app.listen(port);
+console.log(`Server listening on port ${port}`);
 
 const pyOptions = {
   mode: 'text',
-  pythonPath: 'C:\\python27\\python', // TODO load from env for pi
+  pythonPath: process.env.PYTHON_PATH || 'python',
   pythonOptions: [], //-u switch doesn't work on @PB windows. Using unbuffered output in python instead
   args: []
 };
