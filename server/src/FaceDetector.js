@@ -15,7 +15,7 @@ class FaceDetector extends EventEmitter {
      * @param {PythonShell.Options} pyOptions 
      */
     startDetecting(pyOptions) {
-        let pyshell = new PythonShell('../../face-detection/face_detecter.py', pyOptions);
+        let pyshell = new PythonShell('../face-detection/face_detecter.py', pyOptions);
 
         pyshell.on('message', m => this.emit('message', m));
 
