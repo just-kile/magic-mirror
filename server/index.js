@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const { PythonShell } = require('python-shell');
+
+const FaceDetector = require('./src/FaceDetector');
 
 let app = express();
+require('express-ws')(app);
 
 const public = path.join(__dirname, 'public');
 
@@ -20,16 +22,15 @@ const pyOptions = {
   args: []
 };
 
-let pyshell = new PythonShell('../face-detection/face_detecter.py', pyOptions);
+const faceDetector = new FaceDetector();
 
-pyshell.on('message', m => {
-  console.log('received', m)
-});
 
-// end the input stream and allow the process to exit
-pyshell.end(function (err, code, signal) {
-  if (err) throw err;
-  console.log('The exit code was: ' + code);
-  console.log('The exit signal was: ' + signal);
-  console.log('finished');
+faceDetector.startDetecting(pyOptions);
+
+app.ws('/faceDetector', (ws, req) => {
+  console.log('New client connected to ws');
+  faceDetector.on('message', m => {
+    ws.send(m);
+  });
+  // ws.on('message', msg => toSomethingWithClientMessage());
 });
