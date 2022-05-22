@@ -10,6 +10,10 @@ class FaceDetector extends EventEmitter {
         console.log('FaceDetecter initialized');
     }
 
+    parseMessage(message){
+        // Name (length, height, channel) (x1,y1,x2,y2)
+    }
+
     /**
      * 
      * @param {PythonShell.Options} pyOptions 
