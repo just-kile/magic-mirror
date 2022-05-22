@@ -94,7 +94,7 @@ while True:
                 else: 
                     name = "Unsure"
                     
-            print(name, flush=True)
+            print(name + " " + str(face_locations[0]), flush=True)
 
     process_this_frame = not process_this_frame
 

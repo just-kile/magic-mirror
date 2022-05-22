@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            color: #fff;
+            background-color: black;
+        }
+
+        section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        article {
+            flex: 45%;
+            text-align: center;
+            font-family: arial;
+            padding: 0.3em;
+            text-align: justify;
+        }
+
+        article h3 {
+            margin-top: 0;
+            margin-bottom: 0.1em;
+        }
+
+        article img {
+            float: left;
+            width: 30%;
+        }
+
+        article div {
+            float: right;
+            width: 69%;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const RSS_URL = 'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml';
+
+        fetch(RSS_URL)
+            .then(response => response.text())
+            .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+            .then(data => {
+                const items = Array.from(data.querySelectorAll("item"));
+                let html = '<section>';
+                items.slice(0, 4).forEach(el => {
+                    let article = '';
+                    try {
+                        article += '<article>';
+                        article += '<img src="' + el.querySelector("[url]").getAttribute("url") + '" alt="">';
+                        article += '<div class="content">';
+                        article += '<h3>' + el.querySelector("title").innerHTML + '</h3>';
+                        article += '<p>' + el.querySelector("description").innerHTML + '</p>';
+                        article += '</div>';
+                        article += '</article>';
+                        html += article;
+                    } catch (e) {
+                        console.error('Skipping article because of missing element', e);
+                    }
+                    
+                });
+                html += '</section>';
+                document.body.insertAdjacentHTML("beforeend", html);
+            });
+    </script>
+</body>
+
+</html>
