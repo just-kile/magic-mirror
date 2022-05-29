@@ -11,13 +11,23 @@
 * Switch to Python env `workon cv`
 
 ## Switch Display
+### via ssh
 ```sh
-export DISPLAY=:0
-xrandr -o left
+xrandr -display :0 --output HDMI-1 --rotate left
+```
+### automatic
+https://askubuntu.com/a/885247
+
+```sh
+# create /etc/xdg/autostart/setscreen.desktop
+[Desktop Entry]
+Name=Set Screen Rotation
+Exec=/bin/bash -c "sleep 10 && xrandr --output HDMI-1 --rotate left"
+Type=Application
 ```
 
 ```sh
 chromium-browser http://localhost:3000 --auto-open-devtools-for-tabs
 ```
 
--start-fullscreen
+chromium-browser http://localhost -start-fullscreen
