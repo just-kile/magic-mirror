@@ -30,4 +30,25 @@ Type=Application
 chromium-browser http://localhost:3000 --auto-open-devtools-for-tabs
 ```
 
-chromium-browser http://localhost -start-fullscreen
+# Bullseye setup
+* Enable legacy camera system via `sudo raspi-config` -> Interface
+* Run `sudo apt update` and `sudo rpi-update` and reboot
+* Then, `opt/vc/` should exist (see https://stackoverflow.com/a/70218011/912189)
+
+# Docker 
+
+## Building
+
+https://github.com/bastilimbach/docker-MagicMirror
+https://forum.magicmirror.builders/topic/6345/facial-recognition-module-step-by-step-guide
+https://github.com/nischi/MMM-Face-Reco-DNN
+https://www.losant.com/blog/how-to-access-the-raspberry-pi-camera-in-docker
+
+## Starting
+```sh
+sudo docker run --network host -it 385f0d5d1ee5
+export DISPLAY=:0 && chromium-browser http://localhost -start-fullscreen
+chromium-browser http://localhost:8080 -start-fullscreen
+
+
+```
