@@ -35,7 +35,29 @@ chromium-browser http://localhost:3000 --auto-open-devtools-for-tabs
 * Run `sudo apt update` and `sudo rpi-update` and reboot
 * Then, `opt/vc/` should exist (see https://stackoverflow.com/a/70218011/912189)
 
+# Buster Setup
+`sudo raspi-config` 
+    Interface Options -> activate camera
+    Display Options -> disable underscan
+    Display Options -> disable Screen blanking
+
 # Docker 
+## Install
+```sh
+sudo apt update
+sudo apt upgrade
+
+## Install Docker. Raspian doesn't support repository install
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+## Allow non-root
+sudo usermod -aG docker $USER
+newgrp docker 
+
+## Testing
+docker run hello-world
+```
 
 ## Building
 
@@ -46,9 +68,9 @@ https://www.losant.com/blog/how-to-access-the-raspberry-pi-camera-in-docker
 
 ## Starting
 ```sh
-sudo docker run --network host -it 385f0d5d1ee5
-export DISPLAY=:0 && chromium-browser http://localhost -start-fullscreen
-chromium-browser http://localhost:8080 -start-fullscreen
+export DISPLAY=:0 && chromium http://localhost -start-fullscreen
+docker exec -it magic_mirror /bin/bash
 
-
+# Test 
+/opt/vc/bin/raspistill -o output.jpg
 ```

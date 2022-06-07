@@ -7,6 +7,6 @@ docker run\
  --volume /home/pi/Documents/faces:/opt/data\
  --volume /opt/vc:/opt/vc\
  --name magic_mirror\
- --device /dev/vchiq\
+ --privileged\
  --env LD_LIBRARY_PATH=/opt/vc/lib\
  -it pboeck/magic_mirror

@@ -1,4 +1,4 @@
-FROM node:16-bullseye
+FROM node:16-buster
 
 RUN set -e; \
     apt update; \
@@ -8,8 +8,11 @@ RUN set -e; \
     apt install -y python3-pip; \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install dlib; \
-    pip3 install picamera; \
+# See https://github.com/waveform80/picamera/issues/578
+ENV READTHEDOCS=True
+
+RUN pip3 install picamera; \
+    pip3 install dlib; \
     pip3 install face_recognition; \
     pip3 install imutils; \
     pip3 install numpy
