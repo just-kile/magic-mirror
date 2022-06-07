@@ -6,10 +6,10 @@ set -e
 #     cp -Rn /opt/default_modules/. /opt/magic_mirror/modules
 # fi
 
-# if [ ! "$(ls -A /opt/magic_mirror/config)" ]; then
+if [ ! -f "/opt/magic_mirror/config/config.js" ]; then
     echo "Found no config. Using default"
     cp /opt/magic_mirror/mm-config.js /opt/magic_mirror/config/config.js
-# fi
+fi
 
 # if [ -f "/opt/magic_mirror/config/config.js.template" ]; then
 #     echo "Found config template."
