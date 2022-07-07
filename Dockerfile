@@ -34,7 +34,9 @@ RUN git clone https://github.com/nischi/MMM-Face-Reco-DNN.git . && \
 
 WORKDIR /opt/magic_mirror
 
-RUN git clone https://github.com/ulrichwisser/MMM-HTMLSnippet ./modules/MMM-HTMLSnippet
+# RUN git clone https://github.com/ulrichwisser/MMM-HTMLSnippet ./modules/MMM-HTMLSnippet
+
+COPY modules modules
 
 COPY mm-config.js docker-entrypoint.sh ./
 RUN chmod +x ./docker-entrypoint.sh

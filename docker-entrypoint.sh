@@ -16,9 +16,9 @@ fi
 #     envsubst < /opt/magic_mirror/config/config.js.template > /opt/magic_mirror/config/config.js
 # fi
 
-cd /opt/magic_mirror/modules/MMM-Face-Reco-DNN/tools
+# cd /opt/magic_mirror/modules/MMM-Face-Reco-DNN/tools
 
-python3 encode.py -i /opt/data/ -e encodings.pickle -d hog
+# python3 encode.py -i /opt/data/ -e encodings.pickle -d hog
 
 cd /opt/magic_mirror
 
