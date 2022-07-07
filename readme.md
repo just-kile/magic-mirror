@@ -41,6 +41,15 @@ chromium-browser http://localhost:3000 --auto-open-devtools-for-tabs
     Display Options -> disable underscan
     Display Options -> disable Screen blanking
 
+## Hide Mouse
+https://blog.gordonturner.com/2020/06/30/raspberry-pi-full-screen-browser-2020-05-27-raspios-buster/
+```sh
+sudo apt-get install -y unclutter x11-xserver-utils
+mkdir -p ~/.config/lxsession/LXDE-pi
+cp /etc/xdg/lxsession/LXDE-pi/autostart ~/.config/lxsession/LXDE-pi
+sudo nano .config/lxsession/LXDE-pi/autostart
+```
+
 # Docker 
 ## Install
 ```sh
